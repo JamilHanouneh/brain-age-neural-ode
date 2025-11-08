@@ -14,12 +14,12 @@ Thank you for your interest in contributing! This document provides guidelines f
 
 ## Development Setup
 
-git clone https://github.com/JamilHanouneh/brain-age-neural-ode.git
-cd brain-aging-neural-ode
-python -m venv venv
-source venv/bin/activate # or venv\Scripts\activate on Windows
-pip install -r requirements.txt
-pip install -e .
+1. git clone https://github.com/JamilHanouneh/brain-age-neural-ode.git
+2. cd brain-aging-neural-ode
+3. python -m venv venv
+4. source venv/bin/activate # or venv\Scripts\activate on Windows
+5. pip install -r requirements.txt
+6. pip install -e .
 
 
 ## Code Style
@@ -47,4 +47,5 @@ Use GitHub Issues with:
 ## Questions?
 
 Contact: Jamil.hanouneh1997@gmail.com
+
 
