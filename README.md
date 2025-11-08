@@ -55,7 +55,7 @@ Friedrich-Alexander-Universität Erlangen-Nürnberg (FAU)
 
 1. Clone the repository:
 ```
-git clone https://github.com/JamilHanouneh/brain-aging-neural-ode.git
+git clone https://github.com/JamilHanouneh/brain-age-neural-ode.git
 cd brain-aging-neural-ode
 ```
 
