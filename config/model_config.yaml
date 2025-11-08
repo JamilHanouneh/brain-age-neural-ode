@@ -1,0 +1,127 @@
+# ============================================================
+# Model Architecture Configuration
+# ============================================================
+
+# Neural ODE-based Normalizing Flow
+neural_ode_flow:
+  # Input/Output dimensions
+  input_dim: 500          # Dimension after PCA reduction
+  latent_dim: 500         # Latent space dimension
+  
+  # Encoder
+  encoder:
+    hidden_layers: [512, 512]
+    activation: 'tanh'
+    dropout: 0.1
+  
+  # ODE Function
+  ode_function:
+    hidden_dim: 512
+    num_layers: 3
+    activation: 'tanh'      # Options: 'tanh', 'relu', 'swish'
+    dropout: 0.0
+    spectral_norm: false    # Use spectral normalization
+  
+  # ODE Solver
+  ode_solver:
+    method: 'dopri5'        # Options: 'dopri5', 'adams', 'euler'
+    rtol: 1.0e-3            # Relative tolerance
+    atol: 1.0e-4            # Absolute tolerance
+    adjoint: true           # Use adjoint method (memory efficient)
+    first_step_size: null   # None for automatic
+  
+  # Decoder
+  decoder:
+    hidden_layers: [512, 512]
+    activation: 'tanh'
+    dropout: 0.1
+  
+  # Integration span
+  integration:
+    t_start: 0.0
+    t_end: 1.0
+
+# Implicit Neural Representation (SIREN)
+siren:
+  enabled: false
+  
+  # Network architecture
+  in_features: 5          # (x, y, z, age, pathology)
+  hidden_features: 256
+  hidden_layers: 8
+  out_features: 3         # (Vx, Vy, Vz) velocity components
+  
+  # Activation
+  omega_0: 30.0           # Frequency for sine activation
+  learn_omega: false
+  
+  # Initialization
+  uniform_init_range: 1.0
+  final_activation: 'tanh'
+
+# Normalizing Flow (Alternative to Neural ODE)
+normalizing_flow:
+  type: 'coupling'        # Options: 'coupling', 'autoregressive'
+  
+  # Coupling layers
+  num_layers: 16
+  hidden_dim: 512
+  
+  # Masked autoencoder (MAF) parameters
+  use_batch_norm: true
+  batch_norm_momentum: 0.1
+
+# Multimodal Fusion
+multimodal:
+  enabled: false
+  
+  # Modalities
+  modalities:
+    t1_mri:
+      dim: 500
+      weight: 1.0
+    fmri:
+      dim: 300
+      weight: 0.5
+    dti:
+      dim: 200
+      weight: 0.3
+  
+  # Fusion method
+  fusion_type: 'attention'  # Options: 'attention', 'concatenation', 'product'
+  
+  # Attention mechanism
+  attention:
+    hidden_dim: 128
+    num_heads: 4
+
+# Uncertainty Quantification
+uncertainty:
+  enabled: true
+  method: 'mc_dropout'     # Options: 'mc_dropout', 'ensemble', 'bayesian'
+  
+  # MC Dropout
+  dropout_rate: 0.2
+  num_samples: 20
+  
+  # Ensemble
+  num_models: 5
+
+# Regularization
+regularization:
+  weight_decay: 1.0e-5
+  l1_penalty: 0.0
+  l2_penalty: 0.0
+  spectral_norm: false
+  gradient_penalty: 0.0
+
+# Batch Normalization
+batch_norm:
+  enabled: true
+  momentum: 0.1
+  eps: 1.0e-5
+
+# Layer Normalization
+layer_norm:
+  enabled: false
+  eps: 1.0e-5

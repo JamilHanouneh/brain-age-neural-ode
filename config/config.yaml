@@ -1,0 +1,205 @@
+# ============================================================
+# Brain Aging Neural ODE - Main Configuration
+# ============================================================
+
+# ============================================================
+# COMPUTE SETTINGS
+# ============================================================
+compute:
+  # Device selection: 'cpu', 'cuda', 'mps' (for Mac M1/M2), or 'auto'
+  # 'auto' will automatically detect and use GPU if available
+  device: 'auto'  # Change to 'cpu' if no GPU available
+  
+  # Number of CPU workers for data loading
+  num_workers: 4  # Set to 0 for debugging or if having issues
+  
+  # Mixed precision training (only works with GPU)
+  use_amp: false  # Set to true if using GPU for faster training
+  
+  # Deterministic mode (reproducibility)
+  deterministic: true
+  seed: 42
+
+# ============================================================
+# DATA SETTINGS
+# ============================================================
+data:
+  # Dataset selection: 'IXI', 'OASIS', or 'both'
+  dataset: 'IXI'
+  
+  # Data paths (relative to project root)
+  raw_data_dir: 'data/raw'
+  processed_data_dir: 'data/processed'
+  template_dir: 'data/templates'
+  metadata_dir: 'data/metadata'
+  
+  # Data split ratios
+  train_ratio: 0.7
+  val_ratio: 0.15
+  test_ratio: 0.15
+  
+  # Preprocessing settings
+  preprocessing:
+    # Image resolution (for downsampling to save memory)
+    target_shape: [96, 112, 96]  # Reduced from original for CPU compatibility
+    
+    # Intensity normalization
+    normalize: true
+    normalization_method: 'z-score'  # Options: 'z-score', 'min-max'
+    
+    # Registration settings
+    use_registration: true
+    registration_template: 'MNI152_1mm'
+    
+    # Dimensionality reduction
+    pca_components: 500
+    explained_variance_threshold: 0.97
+    
+  # Data augmentation (training only)
+  augmentation:
+    enabled: true
+    random_rotation: 10  # degrees
+    random_scaling: 0.1  # fraction
+    random_noise: 0.05   # std
+    probability: 0.5     # probability of applying augmentation
+
+# ============================================================
+# MODEL SETTINGS
+# ============================================================
+model:
+  # Model type: 'neural_ode_flow', 'normalizing_flow', 'baseline'
+  type: 'neural_ode_flow'
+  
+  # Input/output dimensions
+  input_dim: 393  # After PCA reduction
+  latent_dim: 393
+  age_dim: 1      # First dimension of latent space
+  
+  # Neural ODE settings
+  neural_ode:
+    hidden_dim: 512
+    num_layers: 3
+    activation: 'tanh'  # Options: 'tanh', 'relu', 'swish'
+    solver: 'dopri5'    # ODE solver: 'dopri5', 'adams', 'euler'
+    rtol: 0.001        # Relative tolerance
+    atol: 0.0001         # Absolute tolerance
+    adjoint: true       # Use adjoint method (memory efficient)
+  
+  # Implicit Neural Representation (SIREN) settings
+  siren:
+    enabled: false      # Enable SIREN for high-res generation
+    hidden_features: 256
+    hidden_layers: 8
+    omega_0: 30.0
+    
+  # Uncertainty quantification
+  uncertainty:
+    enabled: true
+    method: 'mc_dropout'  # Options: 'mc_dropout', 'ensemble'
+    dropout_rate: 0.2
+    num_samples: 20
+
+# ============================================================
+# TRAINING SETTINGS
+# ============================================================
+training:
+  # Basic settings
+  batch_size: 8       # Reduced for CPU compatibility
+  num_epochs: 100
+  learning_rate: 1e-4
+  weight_decay: 1e-5
+  
+  # Optimizer
+  optimizer: 'adamw'  # Options: 'adam', 'adamw', 'sgd'
+  scheduler: 'cosine' # Options: 'cosine', 'step', 'plateau', 'none'
+  warmup_epochs: 5
+  
+  # Loss function weights
+  loss_weights:
+    age_prediction: 1.0
+    reconstruction: 0.5
+    latent_prior: 0.1
+    diffeomorphic: 0.01
+    uncertainty: 0.05
+  
+  # Gradient clipping
+  grad_clip: 1.0
+  
+  # Early stopping
+  early_stopping:
+    enabled: true
+    patience: 15
+    min_delta: 0.001
+  
+  # Checkpointing
+  checkpoint:
+    save_freq: 5        # Save every N epochs
+    save_best_only: true
+    monitor: 'val_mae'  # Metric to monitor
+    mode: 'min'         # 'min' or 'max'
+
+# ============================================================
+# EVALUATION SETTINGS
+# ============================================================
+evaluation:
+  # Metrics to compute
+  metrics:
+    - 'mae'             # Mean Absolute Error
+    - 'rmse'            # Root Mean Squared Error
+    - 'r2'              # R-squared
+    - 'pearson'         # Pearson correlation
+    - 'spearman'        # Spearman correlation
+  
+  # Age-stratified evaluation
+  age_bins: [20, 30, 40, 50, 60, 70, 80, 90]
+  
+  # Uncertainty calibration
+  calibration_bins: 10
+
+# ============================================================
+# GENERATION SETTINGS
+# ============================================================
+generation:
+  # Age range for template generation
+  age_range: [40, 50, 60, 70, 80, 90]
+  
+  # Number of samples for Monte Carlo estimation
+  num_samples: 10000  # Reduced for CPU
+  
+  # Output format
+  save_format: 'nifti'  # Options: 'nifti', 'numpy'
+  
+  # Visualization
+  visualize: true
+  slice_indices: [48, 56, 48]  # Axial, coronal, sagittal
+
+# ============================================================
+# LOGGING AND OUTPUT
+# ============================================================
+logging:
+  # Experiment name
+  experiment_name: 'brain_aging_neural_ode'
+  
+  # Output directories
+  output_dir: 'outputs'
+  log_dir: 'outputs/logs'
+  checkpoint_dir: 'outputs/models'
+  
+  # Logging frequency
+  log_freq: 10        # Log every N batches
+  
+  # Tensorboard/Weights & Biases
+  use_tensorboard: true
+  use_wandb: false    # Set to true if using W&B
+  wandb_project: 'brain-aging'
+  
+  # Verbosity
+  verbose: true
+
+# ============================================================
+# REPRODUCIBILITY
+# ============================================================
+reproducibility:
+  seed: 42
+  cudnn_deterministic: true
+  cudnn_benchmark: false

@@ -1,0 +1,93 @@
+# ============================================================
+# Data Paths Configuration
+# ============================================================
+
+# Base directory
+project_root: '.'
+
+# Raw data paths
+raw_data:
+  ixi:
+    base_dir: 'data/raw/IXI'
+    t1_dir: 'data/raw/IXI/IXI-T1'
+    metadata: 'data/raw/IXI/IXI.xls'
+    
+  oasis:
+    base_dir: 'data/raw/OASIS'
+    metadata: 'data/raw/OASIS/participants.tsv'
+
+# Processed data paths
+processed_data:
+  base_dir: 'data/processed'
+  train_dir: 'data/processed/train'
+  val_dir: 'data/processed/val'
+  test_dir: 'data/processed/test'
+  
+  # Feature storage
+  features:
+    velocity_fields: 'data/processed/features/velocity_fields'
+    pca_components: 'data/processed/features/pca'
+    fc_matrices: 'data/processed/features/fc'
+    fa_maps: 'data/processed/features/fa'
+
+# Templates
+templates:
+  base_dir: 'data/templates'
+  mni152: 'data/templates/MNI152'
+  custom: 'data/templates/custom'
+
+# Metadata
+metadata:
+  base_dir: 'data/metadata'
+  raw_metadata: 'data/metadata/raw_metadata.csv'
+  processed_metadata: 'data/metadata/processed_metadata.csv'
+  split_info: 'data/metadata/split_info.json'
+  demographics: 'data/metadata/demographics.csv'
+
+# Model checkpoints
+models:
+  base_dir: 'outputs/models'
+  best_model: 'outputs/models/best_model.pt'
+  latest_checkpoint: 'outputs/models/latest.pt'
+  architecture: 'outputs/models/architecture.json'
+
+# Logs
+logs:
+  base_dir: 'outputs/logs'
+  train_log: 'outputs/logs/training.log'
+  tensorboard: 'outputs/logs/tensorboard'
+  wandb: 'outputs/logs/wandb'
+
+# Results
+results:
+  base_dir: 'outputs'
+  
+  predictions:
+    base_dir: 'outputs/predictions'
+    train_predictions: 'outputs/predictions/train_predictions.npy'
+    val_predictions: 'outputs/predictions/val_predictions.npy'
+    test_predictions: 'outputs/predictions/test_predictions.npy'
+  
+  templates:
+    base_dir: 'outputs/templates'
+    age_templates: 'outputs/templates/age_specific'
+    disease_templates: 'outputs/templates/disease'
+  
+  figures:
+    base_dir: 'outputs/figures'
+    evaluation: 'outputs/figures/evaluation'
+    templates_viz: 'outputs/figures/templates'
+    uncertainty: 'outputs/figures/uncertainty'
+  
+  metrics:
+    overall: 'outputs/metrics_overall.json'
+    by_age_group: 'outputs/metrics_by_age_group.json'
+    by_site: 'outputs/metrics_by_site.json'
+
+# Documentation
+docs:
+  base_dir: 'docs'
+  installation: 'docs/installation.md'
+  dataset_guide: 'docs/dataset_guide.md'
+  training_guide: 'docs/training_guide.md'
+  api_reference: 'docs/api_reference.md'
